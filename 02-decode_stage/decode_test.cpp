@@ -31,7 +31,7 @@ unsigned int DecodeTest::i_instruction(int funct, int rd, int rs1, int imm) {
 }
 
 // Decodes a valid 16-bit CS instruction and extracts its function and registers.
-TEST_F(DecodeTest, DecodesCompressedRegisterFormat) {
+TEST_F(DecodeTest, TC_DES_01) {
 	const Decoded decoded = Decoder::decode(cs_instruction(ALU_SUB, 9, 17), 2);
 
 	EXPECT_EQ(decoded.format, FMT_CS);
@@ -43,7 +43,7 @@ TEST_F(DecodeTest, DecodesCompressedRegisterFormat) {
 }
 
 // Decodes a valid 16-bit CI instruction and extracts its register and immediate.
-TEST_F(DecodeTest, DecodesCompressedImmediateFormat) {
+TEST_F(DecodeTest, TC_DES_02) {
 	const Decoded decoded = Decoder::decode(ci_instruction(ALU_ADDI, 6, 12), 2);
 
 	EXPECT_EQ(decoded.format, FMT_CI);
@@ -55,7 +55,7 @@ TEST_F(DecodeTest, DecodesCompressedImmediateFormat) {
 }
 
 // Sign-extends a negative 6-bit immediate from a 16-bit CI instruction.
-TEST_F(DecodeTest, SignExtendsCompressedImmediate) {
+TEST_F(DecodeTest, TC_DES_03) {
 	const Decoded decoded = Decoder::decode(ci_instruction(ALU_ADDI, 6, -1), 2);
 
 	EXPECT_EQ(decoded.imm, -1);
@@ -63,7 +63,7 @@ TEST_F(DecodeTest, SignExtendsCompressedImmediate) {
 }
 
 // Decodes a valid 32-bit R instruction and extracts all register fields.
-TEST_F(DecodeTest, DecodesRegisterFormat) {
+TEST_F(DecodeTest, TC_DES_04) {
 	const Decoded decoded = Decoder::decode(r_instruction(ALU_MUL, 3, 12, 21), 4);
 
 	EXPECT_EQ(decoded.format, FMT_R);
@@ -75,7 +75,7 @@ TEST_F(DecodeTest, DecodesRegisterFormat) {
 }
 
 // Decodes a valid 32-bit I instruction and extracts its registers and immediate.
-TEST_F(DecodeTest, DecodesImmediateFormat) {
+TEST_F(DecodeTest, TC_DES_05) {
 	const Decoded decoded = Decoder::decode(i_instruction(OP_LW, 4, 7, 24), 4);
 
 	EXPECT_EQ(decoded.format, FMT_I);
@@ -87,7 +87,7 @@ TEST_F(DecodeTest, DecodesImmediateFormat) {
 }
 
 // Sign-extends a negative 16-bit immediate from a 32-bit I instruction.
-TEST_F(DecodeTest, SignExtendsImmediate) {
+TEST_F(DecodeTest, TC_DES_06) {
 	const Decoded decoded = Decoder::decode(i_instruction(OP_LW, 4, 7, -2), 4);
 
 	EXPECT_EQ(decoded.imm, -2);
@@ -95,27 +95,27 @@ TEST_F(DecodeTest, SignExtendsImmediate) {
 }
 
 // Marks a 16-bit CS instruction illegal when its operation code is unsupported.
-TEST_F(DecodeTest, RejectsIllegalCompressedRegisterOperation) {
+TEST_F(DecodeTest, TC_DES_07) {
 	EXPECT_TRUE(Decoder::decode(cs_instruction(15, 1, 2), 2).illegal);
 }
 
 // Marks a 16-bit CI instruction illegal when its operation code is unsupported.
-TEST_F(DecodeTest, RejectsIllegalCompressedImmediateOperation) {
+TEST_F(DecodeTest, TC_DES_08) {
 	EXPECT_TRUE(Decoder::decode(ci_instruction(7, 1, 2), 2).illegal);
 }
 
 // Marks a 32-bit R instruction illegal when its operation code is unsupported.
-TEST_F(DecodeTest, RejectsIllegalRegisterOperation) {
+TEST_F(DecodeTest, TC_DES_09) {
 	EXPECT_TRUE(Decoder::decode(r_instruction(15, 1, 2, 3), 4).illegal);
 }
 
 // Marks a 32-bit I instruction illegal when its operation code is unsupported.
-TEST_F(DecodeTest, RejectsIllegalImmediateOperation) {
+TEST_F(DecodeTest, TC_DES_10) {
 	EXPECT_TRUE(Decoder::decode(i_instruction(8, 1, 2, 3), 4).illegal);
 }
 
 // Rejects a 16-bit instruction with a reserved compressed-format prefix.
-TEST_F(DecodeTest, RejectsIllegalCompressedPrefix) {
+TEST_F(DecodeTest, TC_DES_11) {
 	const Decoded decoded = Decoder::decode(0x8000u, 2);
 
 	EXPECT_TRUE(decoded.illegal);
@@ -123,7 +123,7 @@ TEST_F(DecodeTest, RejectsIllegalCompressedPrefix) {
 }
 
 // Rejects a 32-bit instruction with a prefix that does not select R or I format.
-TEST_F(DecodeTest, RejectsIllegalWidePrefix) {
+TEST_F(DecodeTest, TC_DES_12) {
 	const Decoded decoded = Decoder::decode(0, 4);
 
 	EXPECT_TRUE(decoded.illegal);
@@ -131,7 +131,7 @@ TEST_F(DecodeTest, RejectsIllegalWidePrefix) {
 }
 
 // Rejects instruction sizes other than the supported 2-byte and 4-byte sizes.
-TEST_F(DecodeTest, RejectsUnsupportedInstructionSize) {
+TEST_F(DecodeTest, TC_DES_13) {
 	const Decoded decoded = Decoder::decode(0, 3);
 
 	EXPECT_TRUE(decoded.illegal);

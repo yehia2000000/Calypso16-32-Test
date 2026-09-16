@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 
 class DecodeTest : public ::testing::Test {
+    public:
     // readable test helpers to construct raw instruction words for each format
 	static unsigned int cs_instruction(int funct, int rd, int rs2);
 	static unsigned int ci_instruction(int funct, int rd, int imm);
